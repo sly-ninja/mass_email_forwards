@@ -14,46 +14,37 @@ from_addr = pwd.FROM_EML
 to_addr = pwd.TO_EML
 
    
-    
 
 def fetch_email():
     messages = []
     
-    try:
-        client = imaplib.IMAP4_SSL(imap_host, imap_port)
-        client.login(user, passwd)
-        client.select('rastabus')
 
-        type, data = client.search(None, 'ALL')
-        mail_ids = data[0]
+    client = imaplib.IMAP4_SSL(imap_host, imap_port)
+    client.login(user, passwd)
+    client.select('rastabus')
 
-        id_list = mail_ids.split()   
-        first_email_id = int(id_list[0])
-        last_email_id = int(id_list[-1])
+    resp, data = client.search(None, 'ALL')
+    if resp != 'OK':
+        print('no messages found')
+        return
 
-
-
-        for i in range(last_email_id, first_email_id, -1):
-            typ, data = client.fetch(i, '(RFC822)' )
+    for i in data[0].split():
+        resp, data = client.fetch(i, '(RFC822)' )
+        if resp != 'OK':
+            print("ERROR getting message", i)
+            return
         
-            for response_part in data:
-                if isinstance(response_part, tuple):
-                # create a Message instance from the email data
-                    msg = email.message_from_string(response_part[1])
-                # replace headers (could do other processing here)
-                    msg.replace_header("From", from_addr)
-                    msg.replace_header("To", to_addr)
-                    messages.append(msg)
-            
-        client.close()
-        client.logout()
-        
-        return messages
-
-    except:
-        raise Exception
-        print('SOMETHING')
-
+        # create a Message instance from the email data
+        msg = email.message_from_bytes(data[0][1])
+        # replace headers (could do other processing here)
+        msg.replace_header("From", from_addr)
+        msg.replace_header("To", to_addr)
+        messages.append(msg)
+#        
+    client.close()
+    client.logout()
+    
+    return messages
 
 
 def forward_email():
