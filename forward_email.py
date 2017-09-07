@@ -1,4 +1,4 @@
-import passwords as pwd
+import input_prompts as pwd
 
 import smtplib, imaplib, email
 
@@ -10,9 +10,9 @@ smtp_port = 587
 
 user = pwd.USER
 passwd = pwd.PASSWORD
-from_addr = pwd.FROM_EML
+from_addr = pwd.USER
 to_addr = pwd.TO_EML
-
+folder = pwd.FOLDER
    
 
 def fetch_email():
@@ -21,7 +21,7 @@ def fetch_email():
 
     client = imaplib.IMAP4_SSL(imap_host, imap_port)
     client.login(user, passwd)
-    client.select('rastabus')
+    client.select(folder)
 
     resp, data = client.search(None, 'ALL')
     if resp != 'OK':
