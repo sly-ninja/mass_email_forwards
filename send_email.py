@@ -6,7 +6,6 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import sys
 import os
-import datetime
 
 
 def send_attachment(recipient, subject, body, files=[]):
@@ -53,7 +52,7 @@ user = ''
 passwd = ''
 
 #send_attachment( [recipient], subject, body, [attach] )
-send_attachment(['name@domain.com'], 
+send_attachment(['@gmail.com'], 
          'Subject', 
          'Dear sir..', 
          ['tkinter_gui.py'] )
